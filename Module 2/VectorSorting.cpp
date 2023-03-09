@@ -122,20 +122,39 @@ vector<Bid> loadBids(string csvPath) {
  */
 int partition(vector<Bid>& bids, int begin, int end) {
     //set low and high equal to begin and end
-
+    int lowIndex = begin;
+    int highIndex = end;
     // pick the middle element as pivot point
-    
-    // while not done 
-
+    int midPoint = lowIndex + (highIndex - lowIndex) / 2;
+    Bid pivot = bids.at(midPoint);
+  
+    bool done = false;
+    while (!done) {
         // keep incrementing low index while bids[low] < bids[pivot]
-       
+        while (bids.at(lowIndex).title < pivot.title) {
+            lowIndex += 1;
+        }
+
         // keep decrementing high index while bids[pivot] < bids[high]
+        while (pivot.title < bids.at(highIndex).title) {
+            highIndex -= 1;
+        }
 
         /* If there are zero or one elements remaining,
             all bids are partitioned. Return high */
-       // else swap the low and high bids (built in vector method)
-            // move low and high closer ++low, --high
-    //return high;
+        if (lowIndex >= highIndex) {
+            done = true;
+        }
+            // else swap the low and high bids (built in vector method)
+                 // move low and high closer ++low, --high
+        else {
+            swap(bids.at(lowIndex), bids.at(highIndex));
+
+            lowIndex += 1;
+            highIndex -= 1;
+        }
+    }
+    return highIndex;
 }
 
 /**
@@ -148,19 +167,24 @@ int partition(vector<Bid>& bids, int begin, int end) {
  * @param end the ending index to sort on
  */
 void quickSort(vector<Bid>& bids, int begin, int end) {
-    //set mid equal to 0
+    int lowIndex = begin;
+    int highIndex = end;
 
     /* Base case: If there are 1 or zero bids to sort,
      partition is already sorted otherwise if begin is greater
      than or equal to end then return*/
+    if (lowIndex >= highIndex) {
+        return;
+    }
 
     /* Partition bids into low and high such that
      midpoint is location of last element in low */
-     
+    int lowEndIndex = partition(bids, lowIndex, highIndex);
+
     // recursively sort low partition (begin to mid)
-
+    quickSort(bids, lowIndex, lowEndIndex);
     // recursively sort high partition (mid+1 to end)
-
+    quickSort(bids, lowEndIndex + 1, highIndex);
 }
 
 // FIXME (1a): Implement the selection sort logic over bid.title
@@ -175,18 +199,27 @@ void quickSort(vector<Bid>& bids, int begin, int end) {
  */
 void selectionSort(vector<Bid>& bids) {
     //define min as int (index of the current minimum bid)
+    int i = 0;
+    int j = 0;
+    int indexSmallest = 0;
+    int pos = 0; // pos is the position within bids that divides sorted/unsorted
 
     // check size of bids vector
     // set size_t platform-neutral result equal to bid.size()
+    int size_t = bids.size();
 
-    // pos is the position within bids that divides sorted/unsorted
     // for size_t pos = 0 and less than size -1 
-        // set min = pos
-        // loop over remaining elements to the right of position
-            // if this element's title is less than minimum title
-                // this element becomes the minimum
-        // swap the current minimum with smaller one found
-            // swap is a built in vector method
+    for (i = 0; i < size_t - 1; i++) {
+        indexSmallest = i;
+        for (j = i + 1; j < size_t; j++) {
+            // Check if the title at the current index, is smaller than the current smallest title
+            if (bids.at(j).title < bids.at(indexSmallest).title) {
+                indexSmallest = j;
+            }
+        }
+
+        swap(bids.at(i), bids.at(indexSmallest));
+    }
 }
 
 /**
@@ -211,10 +244,11 @@ int main(int argc, char* argv[]) {
     string csvPath;
     switch (argc) {
     case 2:
-        csvPath = argv[1];
+        csvPath = "eBid_Monthly_Sales.csv";
         break;
     default:
-        csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
+        // csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
+        csvPath = "eBid_Monthly_Sales.csv";
     }
 
     // Define a vector to hold all the bids
@@ -262,9 +296,30 @@ int main(int argc, char* argv[]) {
             break;
 
         // FIXME (1b): Invoke the selection sort and report timing results
+        // Report Timing: 
+        case 3:
+            ticks = clock();
+
+            selectionSort(bids);
+
+            // Calculate elapsed time and display result
+            ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+            cout << "time: " << ticks << " clock ticks" << endl;
+            cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+
+            break;
 
         // FIXME (2b): Invoke the quick sort and report timing results
+        case 4:
+            ticks = clock();
 
+            quickSort(bids, 0, bids.size() - 1);
+            // Calculate elapsed time and display result
+            ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+            cout << "time: " << ticks << " clock ticks" << endl;
+            cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+
+            break;
         }
     }
 
