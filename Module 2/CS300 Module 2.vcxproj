@@ -19,7 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CSVparser.cpp" />
     <ClCompile Include="VectorSorting.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="eBid_Monthly_Sales.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CSVparser.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
