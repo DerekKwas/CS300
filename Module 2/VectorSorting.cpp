@@ -296,7 +296,7 @@ int main(int argc, char* argv[]) {
             break;
 
         // FIXME (1b): Invoke the selection sort and report timing results
-        // Report Timing: 
+        // Timing Report: 4.41 seconds
         case 3:
             ticks = clock();
 
@@ -310,6 +310,7 @@ int main(int argc, char* argv[]) {
             break;
 
         // FIXME (2b): Invoke the quick sort and report timing results
+        // Timing Report: .107 seconds
         case 4:
             ticks = clock();
 
