@@ -302,6 +302,9 @@ int main(int argc, char* argv[]) {
 
             selectionSort(bids);
 
+            // Show amount of bids sorted
+            cout << bids.size() << " bids sorted" << endl;
+
             // Calculate elapsed time and display result
             ticks = clock() - ticks; // current clock ticks minus starting clock ticks
             cout << "time: " << ticks << " clock ticks" << endl;
@@ -315,6 +318,10 @@ int main(int argc, char* argv[]) {
             ticks = clock();
 
             quickSort(bids, 0, bids.size() - 1);
+
+            // Show amount of bids sorted
+            cout << bids.size() << " bids sorted" << endl;
+
             // Calculate elapsed time and display result
             ticks = clock() - ticks; // current clock ticks minus starting clock ticks
             cout << "time: " << ticks << " clock ticks" << endl;
