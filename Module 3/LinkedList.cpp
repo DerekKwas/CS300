@@ -157,7 +157,7 @@ void LinkedList::PrintList() {
     // while loop over each node looking for a match
     while (currNode != nullptr) {
         //output current bidID, title, amount and fund
-        cout << currNode->bid.title << " | " << currNode->bid.bidId << " | " << currNode->bid.amount << " | " << currNode->bid.fund;
+        cout << currNode->bid.bidId << " | " << currNode->bid.title << " | " << currNode->bid.amount << " | " << currNode->bid.fund << endl;
         //set current equal to next
         currNode = currNode->next;
     }
@@ -200,8 +200,6 @@ void LinkedList::Remove(string bidId) {
                 currNode = currNode->next;
             }
         }
-        // No matching bid found
-        cout << "No matching bid found\n";
     }
 
 }
@@ -213,22 +211,24 @@ void LinkedList::Remove(string bidId) {
  */
 Bid LinkedList::Search(string bidId) {
     // FIXME (6): Implement search logic
+    Bid bid;
 
     // start at the head of the list
     Node* currNode = head;
 
     // keep searching until end reached with while loop (next != nullptr
-    while (currNode != nullptr) {
+    while (currNode->next != nullptr) {
         // if the current node matches, return it
         if (currNode->bid.bidId == bidId) {
-            return currNode->bid;
+            bid = currNode->bid;
+            break;
         }
         // else current node is equal to next node
         else {
             currNode = currNode->next;
         }
     }
-    return currNode->bid;
+    return bid;
 }
 
 /**
@@ -345,7 +345,7 @@ int main(int argc, char* argv[]) {
         bidKey = argv[2];
         break;
     default:
-        csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
+        csvPath = "eBid_Monthly_Sales.csv";
         bidKey = "98109";
     }
 
