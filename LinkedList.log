@@ -1,0 +1,5 @@
+﻿  CSVparser.cpp
+C:\Users\kwasd\source\repos\DerekKwas\CS300\Module 3\Module 3\x64\Debug\CSVparser.cpp(116,29): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\kwasd\source\repos\DerekKwas\CS300\Module 3\Module 3\x64\Debug\CSVparser.cpp(121,28): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\kwasd\source\repos\DerekKwas\CS300\Module 3\Module 3\x64\Debug\CSVparser.cpp(203,26): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
+  LinkedList.vcxproj -> C:\Users\kwasd\Source\Repos\DerekKwas\CS300\Module 3\Module 3\x64\Debug\LinkedList.exe

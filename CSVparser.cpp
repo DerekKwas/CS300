@@ -11,7 +11,7 @@ namespace csv {
       std::string line;
       if (type == eFILE)
       {
-        _file = data;
+        _file = "eBid_Monthly_Sales.csv";
         std::ifstream ifile(_file.c_str());
         if (ifile.is_open())
         {
