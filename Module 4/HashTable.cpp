@@ -1,9 +1,9 @@
 //============================================================================
 // Name        : HashTable.cpp
-// Author      : John Watson
+// Author      : Derek Kwasniewski
 // Version     : 1.0
 // Copyright   : Copyright © 2017 SNHU COCE
-// Description : Hello World in C++, Ansi-style
+// Description : Module 4 Hash Table Assignment
 //============================================================================
 
 #include <algorithm>
