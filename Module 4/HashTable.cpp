@@ -11,7 +11,6 @@
 #include <iostream>
 #include <string> // atoi
 #include <time.h>
-
 #include "CSVparser.hpp"
 
 using namespace std;
