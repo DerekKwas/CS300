@@ -90,8 +90,8 @@ public:
  */
 HashTable::HashTable() {
     // FIXME (1): Initialize the structures used to hold bids
-    
     // Initalize node structure by resizing tableSize
+    nodes.resize(DEFAULT_SIZE); // Default size if no size is given
 }
 
 /**
@@ -102,6 +102,8 @@ HashTable::HashTable() {
 HashTable::HashTable(unsigned int size) {
     // invoke local tableSize to size with this->
     // resize nodes size
+    this->tableSize = size;
+    nodes.resize(size);
 }
 
 
@@ -110,8 +112,8 @@ HashTable::HashTable(unsigned int size) {
  */
 HashTable::~HashTable() {
     // FIXME (2): Implement logic to free storage when class is destroyed
-    
     // erase nodes beginning
+    nodes.erase(nodes.begin());
 }
 
 /**
@@ -125,7 +127,7 @@ HashTable::~HashTable() {
  */
 unsigned int HashTable::hash(int key) {
     // FIXME (3): Implement logic to calculate a hash value
-    // return key tableSize
+    return key % tableSize;
 }
 
 /**
@@ -136,13 +138,34 @@ unsigned int HashTable::hash(int key) {
 void HashTable::Insert(Bid bid) {
     // FIXME (5): Implement logic to insert a bid
     // create the key for the given bid
-    // retrieve node using key
+    unsigned key = hash(atoi(bid.bidId.c_str()));
+
+    // try and retrieve node using key
+    Node* oldNode = &(nodes.at(key));
+ 
     // if no entry found for the key
+    if (oldNode == nullptr) {
         // assign this node to the key position
+        Node* newNode = new Node(bid, key);
+        nodes.insert(nodes.begin() + key, *newNode);
+    }
     // else if node is not used
-         // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
-    // else find the next open node
+    else {
+        // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
+        if (oldNode->key == UINT_MAX) {
+            oldNode->key = key;
+            oldNode->bid = bid;
+            oldNode->next = nullptr;
+        }
+        // else find the next open node
+        else {
             // add new newNode to end
+            while (oldNode->next != nullptr) {
+                oldNode = oldNode->next;
+            }
+            oldNode->next = new Node(bid, key);
+        }
+    }
 }
 
 /**
@@ -151,6 +174,9 @@ void HashTable::Insert(Bid bid) {
 void HashTable::PrintAll() {
     // FIXME (6): Implement logic to print all bids
     // for node begin to end iterate
+    for (unsigned int i = 0; i < nodes.size(); ++i) {
+        displayBid(nodes.at(i).bid);
+    }
     //   if key not equal to UINT_MAx
             // output key, bidID, title, amount and fund
             // node is equal to next iter
@@ -168,7 +194,9 @@ void HashTable::PrintAll() {
 void HashTable::Remove(string bidId) {
     // FIXME (7): Implement logic to remove a bid
     // set key equal to hash atoi bidID cstring
+    unsigned key = hash(atoi(bidId.c_str()));
     // erase node begin and key
+    nodes.erase(nodes.begin() + key);
 }
 
 /**
@@ -182,14 +210,30 @@ Bid HashTable::Search(string bidId) {
     // FIXME (8): Implement logic to search for and return a bid
 
     // create the key for the given bid
-    // if entry found for the key
-         //return node bid
+    unsigned key = hash(atoi(bidId.c_str()));
 
+    // try and retrieve node using key
+    Node* node = &(nodes.at(key));
+
+    // if entry found for the key
+    if (node != nullptr && node->key != UINT_MAX && node->bid.bidId.compare(bidId) == 0) {
+         //return node bid
+        return node->bid;
+    }
     // if no entry found for the key
-      // return bid
+    if (node == nullptr || node->key == UINT_MAX) {
+        // return bid
+        return bid;
+    }
     // while node not equal to nullptr
+    while (node != nullptr) {
         // if the current node matches, return it
+        if (node->key != UINT_MAX && node->bid.bidId.compare(bidId) == 0) {
+            return node->bid;
+        }
         //node is equal to next node
+        node = node->next;
+    }   
 
     return bid;
 }
@@ -272,7 +316,7 @@ int main(int argc, char* argv[]) {
     switch (argc) {
     case 2:
         csvPath = argv[1];
-        bidKey = "98109";
+        bidKey = "98190";
         break;
     case 3:
         csvPath = argv[1];
@@ -280,7 +324,7 @@ int main(int argc, char* argv[]) {
         break;
     default:
         csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-        bidKey = "98109";
+        bidKey = "98190";
     }
 
     // Define a timer variable
