@@ -174,15 +174,22 @@ void HashTable::Insert(Bid bid) {
 void HashTable::PrintAll() {
     // FIXME (6): Implement logic to print all bids
     // for node begin to end iterate
-    for (unsigned int i = 0; i < nodes.size(); ++i) {
-        displayBid(nodes.at(i).bid);
-    }
-    //   if key not equal to UINT_MAx
+    for (auto i = nodes.begin(); i != nodes.end(); i++) {
+        // if key not equal to UINT_MAx
+        if (i->key != UINT_MAX) {
             // output key, bidID, title, amount and fund
+            cout << "Key " << i->key << ": " << i->bid.bidId << " | " << i->bid.title << " | " << i->bid.fund << endl;
             // node is equal to next iter
+            Node* tempNode = i->next;
             // while node not equal to nullptr
-               // output key, bidID, title, amount and fund
-               // node is equal to next node
+            while (tempNode != nullptr) {
+                // output key, bidID, title, amount and fund
+                cout << "Key " << tempNode->key << ": " << tempNode->bid.bidId << " | " << tempNode->bid.title << " | " << tempNode->bid.fund << endl;
+                // node is equal to next node
+                tempNode = tempNode->next;
+            }
+         }
+    }
 
 }
 
