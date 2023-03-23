@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Module 3/LinkedList/x64/Debug
+/Module 3/LinkedList/.vs/LinkedList/v17
+/Module 3/LinkedList/LinkedList.sln
+/Module 3/LinkedList/LinkedList.vcxproj
+/Module 3/LinkedList/LinkedList.vcxproj.filters
+/Module 3/LinkedList/LinkedList.vcxproj.user
+/Module 3/Module 3.rar
