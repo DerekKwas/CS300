@@ -1,9 +1,9 @@
 //============================================================================
 // Name        : BinarySearchTree.cpp
-// Author      : JYour name
+// Author      : Derek KWasniewski
 // Version     : 1.0
 // Copyright   : Copyright © 2017 SNHU COCE
-// Description : Hello World in C++, Ansi-style
+// Description : Binary Search Tree Data Structure
 //============================================================================
 
 #include <iostream>
@@ -63,7 +63,6 @@ class BinarySearchTree {
 private:
     Node* root;
 
-    void addNode(Node* node, Bid bid);
     void inOrder(Node* node);
     Node* removeNode(Node* node, string bidId);
 
@@ -82,6 +81,7 @@ public:
 BinarySearchTree::BinarySearchTree() {
     // FixMe (1): initialize housekeeping variables
     //root is equal to nullptr
+    root = nullptr;
 }
 
 /**
@@ -89,30 +89,12 @@ BinarySearchTree::BinarySearchTree() {
  */
 BinarySearchTree::~BinarySearchTree() {
     // recurse from root deleting every node
+    delete root->left;
+    delete root->right;
 }
 
-/**
- * Traverse the tree in order
- */
 void BinarySearchTree::InOrder() {
-    // FixMe (2): In order root
-    // call inOrder fuction and pass root 
-}
-
-/**
- * Traverse the tree in post-order
- */
-void BinarySearchTree::PostOrder() {
-    // FixMe (3): Post order root
-    // postOrder root
-}
-
-/**
- * Traverse the tree in pre-order
- */
-void BinarySearchTree::PreOrder() {
-    // FixMe (4): Pre order root
-    // preOrder root
+    this->inOrder(root);
 }
 
 /**
@@ -120,10 +102,43 @@ void BinarySearchTree::PreOrder() {
  */
 void BinarySearchTree::Insert(Bid bid) {
     // FIXME (5) Implement inserting a bid into the tree
+    Node* newNode = new Node;
+    newNode->bid = bid;
+
     // if root equarl to null ptr
-      // root is equal to new node bid
-    // else
-      // add Node root and bid
+    if (root == nullptr) {
+        // root is equal to new node bid
+        root = newNode;
+        newNode->left = nullptr;
+        newNode->right = nullptr;
+    }
+    else {
+        // add Node root and bid
+        Node* currNode = root;
+
+        while (currNode != nullptr) {
+            if (newNode->bid.bidId < currNode->bid.bidId) {
+                if (currNode->left == nullptr) {
+                    currNode->left = newNode;
+                    currNode = nullptr;
+                }
+                else {
+                    currNode = currNode->left;
+                }
+            }
+            else {
+                if (currNode->right == nullptr) {
+                    currNode->right = newNode;
+                    currNode = nullptr;
+                }
+                else {
+                    currNode = currNode->right;
+                }
+            }
+            newNode->left = nullptr;
+            newNode->right = nullptr;
+        }
+    }
 }
 
 /**
@@ -132,6 +147,51 @@ void BinarySearchTree::Insert(Bid bid) {
 void BinarySearchTree::Remove(string bidId) {
     // FIXME (6) Implement removing a bid from the tree
     // remove node root bidID
+    this->removeNode(root, bidId);
+}
+
+Node* BinarySearchTree::removeNode(Node* node, string bidId) {
+     // if this node is null then return (avoid crashing)
+    if (node == nullptr) {
+        return node;
+    }
+
+    // recurse down left subtree
+    if (bidId < node->bid.bidId) {
+        node->left = removeNode(node->left, bidId);
+    }
+    else if (bidId > node->bid.bidId) {
+        node->right = removeNode(node->right, bidId);
+    }
+    else {
+        // no children so this is a leaf node
+        if (node->left == nullptr && node->right == nullptr) {
+            delete node;
+            node = nullptr;
+        }
+        // one child to the left
+        else if (node->left != nullptr && node->right == nullptr) {
+            Node* temp = node;
+            node = node->left;
+            delete temp;
+        }
+        // one child to the right
+        else if (node->right != nullptr && node->left == nullptr) {
+            Node* temp = node;
+            node = node->right;
+            delete temp;
+        }
+        // two children
+        else {
+            Node* temp = node->right;
+            while (temp->left != nullptr) {
+                temp = temp->left;
+            }
+            node->bid = temp->bid;
+            node->right = removeNode(node->right, temp->bid.bidId);
+        }
+    }
+    return node;
 }
 
 /**
@@ -140,56 +200,41 @@ void BinarySearchTree::Remove(string bidId) {
 Bid BinarySearchTree::Search(string bidId) {
     // FIXME (7) Implement searching the tree for a bid
     // set current node equal to root
+    Node* currNode = root;
 
     // keep looping downwards until bottom reached or matching bidId found
+    while (currNode != nullptr) {
         // if match found, return current bid
-
+        if (currNode->bid.bidId == bidId) {
+            return currNode->bid;
+        }
         // if bid is smaller than current node then traverse left
+        else if (bidId < currNode->bid.bidId) {
+            currNode = currNode->left;
+        }
         // else larger so traverse right
+        else {
+            currNode = currNode->right;
+        }
+    }
+    // Bid not found, return empty bid
     Bid bid;
     return bid;
 }
 
-/**
- * Add a bid to some node (recursive)
- *
- * @param node Current node in tree
- * @param bid Bid to be added
- */
-void BinarySearchTree::addNode(Node* node, Bid bid) {
-    // FIXME (8) Implement inserting a bid into the tree
-    // if node is larger then add to left
-        // if no left node
-            // this node becomes left
-        // else recurse down the left node
-    // else
-        // if no right node
-            // this node becomes right
-        //else
-            // recurse down the left node
-}
 void BinarySearchTree::inOrder(Node* node) {
-      // FixMe (9): Pre order root
-      //if node is not equal to null ptr
-      //InOrder not left
-      //output bidID, title, amount, fund
-      //InOder right
-}
-void BinarySearchTree::postOrder(Node* node) {
-      // FixMe (10): Pre order root
-      //if node is not equal to null ptr
-      //postOrder left
-      //postOrder right
-      //output bidID, title, amount, fund
+    // FixMe (9): Pre order root
+    //if node is not equal to null ptr
+    if (node == nullptr) {
+        return;
+    }
 
-}
-
-void BinarySearchTree::preOrder(Node* node) {
-      // FixMe (11): Pre order root
-      //if node is not equal to null ptr
-      //output bidID, title, amount, fund
-      //postOrder left
-      //postOrder right      
+    //InOrder left
+    inOrder(node->left);
+    //output bidID, title, amount, fund
+    cout << node->bid.bidId << ": " << node->bid.title << " | " << node->bid.amount << " | " << node->bid.fund << endl;
+    //InOder right
+    inOrder(node->right);
 }
 
 //============================================================================
@@ -278,7 +323,7 @@ int main(int argc, char* argv[]) {
         break;
     default:
         csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-        bidKey = "98109";
+        bidKey = "98124";
     }
 
     // Define a timer variable
