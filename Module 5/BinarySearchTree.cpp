@@ -113,28 +113,36 @@ void BinarySearchTree::Insert(Bid bid) {
         newNode->right = nullptr;
     }
     else {
-        // add Node root and bid
+        // Create new node equal to root node
         Node* currNode = root;
 
+        // Continue looping through tree until a proper spot has been found for the new node
         while (currNode != nullptr) {
+            // LEFT branch
             if (newNode->bid.bidId < currNode->bid.bidId) {
+                // IF no left node set it to the new node
                 if (currNode->left == nullptr) {
                     currNode->left = newNode;
                     currNode = nullptr;
                 }
+                // Set currNode to the new left node
                 else {
                     currNode = currNode->left;
                 }
             }
+            // RIGHT branch
             else {
+                // IF no right node set it to the new node
                 if (currNode->right == nullptr) {
                     currNode->right = newNode;
                     currNode = nullptr;
                 }
+                // Set currNode to the new right node
                 else {
                     currNode = currNode->right;
                 }
             }
+            // Once a spot has been found for the new node, set its left & right nodes to nullptr as the newNode is a leaf node
             newNode->left = nullptr;
             newNode->right = nullptr;
         }
@@ -156,13 +164,15 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
         return node;
     }
 
-    // recurse down left subtree
+    // Recurse down left subtree
     if (bidId < node->bid.bidId) {
         node->left = removeNode(node->left, bidId);
     }
+    // Recurse down right subtree
     else if (bidId > node->bid.bidId) {
         node->right = removeNode(node->right, bidId);
     }
+    // ELSE correct node found
     else {
         // no children so this is a leaf node
         if (node->left == nullptr && node->right == nullptr) {
