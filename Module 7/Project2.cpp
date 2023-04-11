@@ -8,6 +8,9 @@
 
 #include <iostream>
 #include <time.h>
+#include <vector>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -22,6 +25,7 @@ double strToDouble(string str, char ch);
 struct Course {
     string courseNum; // unique identifier
     string title;
+    vector<string> prereqs;
 };
 
 // Internal structure for tree node
@@ -55,9 +59,7 @@ class BinarySearchTree {
 
 private:
     Node* root;
-
     void inOrder(Node* node);
-    Node* removeNode(Node* node, string courseNum);
 
 public:
     BinarySearchTree();
@@ -85,13 +87,6 @@ BinarySearchTree::~BinarySearchTree() {
     delete root->right;
 }
 
-void BinarySearchTree::InOrder() {
-    this->inOrder(root);
-}
-
-/**
- * Insert a course
- */
 void BinarySearchTree::Insert(Course course) {
     Node* newNode = new Node;
     newNode->course = course;
@@ -140,58 +135,8 @@ void BinarySearchTree::Insert(Course course) {
     }
 }
 
-/**
- * Remove a course
- */
-void BinarySearchTree::Remove(string courseNum) {
-    // remove node root courseNum
-    this->removeNode(root, courseNum);
-}
-
-Node* BinarySearchTree::removeNode(Node* node, string courseNum) {
-     // if this node is null then return (avoid crashing)
-    if (node == nullptr) {
-        return node;
-    }
-
-    // Recurse down left subtree
-    if (courseNum < node->course.courseNum) {
-        node->left = removeNode(node->left, courseNum);
-    }
-    // Recurse down right subtree
-    else if (courseNum > node->course.courseNum) {
-        node->right = removeNode(node->right, courseNum);
-    }
-    // ELSE correct node found
-    else {
-        // no children so this is a leaf node
-        if (node->left == nullptr && node->right == nullptr) {
-            delete node;
-            node = nullptr;
-        }
-        // one child to the left
-        else if (node->left != nullptr && node->right == nullptr) {
-            Node* temp = node;
-            node = node->left;
-            delete temp;
-        }
-        // one child to the right
-        else if (node->right != nullptr && node->left == nullptr) {
-            Node* temp = node;
-            node = node->right;
-            delete temp;
-        }
-        // two children
-        else {
-            Node* temp = node->right;
-            while (temp->left != nullptr) {
-                temp = temp->left;
-            }
-            node->course = temp->course;
-            node->right = removeNode(node->right, temp->course.courseNum);
-        }
-    }
-    return node;
+void BinarySearchTree::InOrder() {
+    this->inOrder(root);
 }
 
 /**
@@ -229,11 +174,35 @@ void BinarySearchTree::inOrder(Node* node) {
 
     //InOrder left
     inOrder(node->left);
-    //output courseNum, title, prerequisites
-    // FIXME: Output course data for prerequisites
+    //output courseNum, title
     cout << node->course.courseNum << ": " << node->course.title << endl;
     //InOder right
     inOrder(node->right);
+}
+
+void loadCourses(string filePath, BinarySearchTree* bst) {
+    // Create file stream object
+    fstream fs;
+
+    // Added file extenstion to filename
+    filePath.append(".txt");
+
+    // Open file with filePath
+    fs.open(filePath, fstream::in);
+
+    // If file doesn't exist, return
+    if (!fs.is_open()) {
+        cout << "ERROR: No file with that name in main directory!" << endl;
+        return;
+    }
+    
+    // POSSIBLE PROBLEM: Microsoft Text file encoding can cause a problem if it is UTF-8 BOM
+    // FIX: Save text file as the same file but change the encoding to the normal UTF-8
+    string line;
+    while (getline(fs, line)) {
+        
+    }
+    return;
 }
 
 //============================================================================
@@ -271,6 +240,10 @@ int main(int argc, char* argv[]) {
 
     // FIXME: Create function to load file
 
+    // Declare variable to hold user choice for key and choice for file path
+    string searchNum;
+    string filePath;
+
     // Define a timer variable
     clock_t ticks;
 
@@ -281,59 +254,58 @@ int main(int argc, char* argv[]) {
 
     int choice = 0;
     while (choice != 9) {
-        cout << "Menu:" << endl;
-        cout << "  1. Load Courses" << endl;
-        cout << "  2. Display All Courses" << endl;
-        cout << "  3. Find Course" << endl;
-        cout << "  4. Remove Course" << endl;
+        cout << "Welcome To The Course Planner:" << endl;
+        cout << "  1. Load Data Structure" << endl;
+        cout << "  2. Print Course List" << endl;
+        cout << "  3. Print Course" << endl;
         cout << "  9. Exit" << endl;
-        cout << "Enter choice: ";
+        cout << "What would you like to do? ";
         cin >> choice;
 
         switch (choice) {
 
-        case 1:
-            
-            // Initialize a timer variable before loading bids
-            ticks = clock();
+            case 1:
 
-            // FIXME: Complete the method call to load the courses
+                // Initialize a timer variable before loading bids
+                ticks = clock();
 
-            // Calculate elapsed time and display result
-            ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-            cout << "time: " << ticks << " clock ticks" << endl;
-            cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
-            break;
+                cout << "Enter file name (without .txt): ";
+                cin >> filePath;
+                loadCourses(filePath, bst);
 
-        case 2:
-            bst->InOrder();
-            break;
+                // Calculate elapsed time and display result
+                ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+                cout << "time: " << ticks << " clock ticks" << endl;
+                cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+                break;
 
-        case 3:
-            ticks = clock();
+            case 2:
+                bst->InOrder();
+                break;
 
-            bid = bst->Search(bidKey);
+            case 3:
+                ticks = clock();
 
-            ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+                cout << "Please enter the ID of the course: ";
+                cin >> searchNum;
 
-            if (!bid.bidId.empty()) {
-                displayBid(bid);
-            } else {
-            	cout << "Bid Id " << bidKey << " not found." << endl;
-            }
+                course = bst->Search(searchNum);
 
-            cout << "time: " << ticks << " clock ticks" << endl;
-            cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+                ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 
-            break;
+                if (!course.courseNum.empty()) {
+                    displayCourse(course);
+                }
+                else {
+                    cout << "Course number " << searchNum << " not found." << endl;
+                }
 
-        case 4:
-            bst->Remove(bidKey);
-            break;
+                cout << "time: " << ticks << " clock ticks" << endl;
+                cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+
+                break;
         }
     }
-
     cout << "Good bye." << endl;
-
-	return 0;
+    return 0;
 }
