@@ -66,7 +66,6 @@ public:
     virtual ~BinarySearchTree();
     void InOrder();
     void Insert(Course course);
-    void Remove(string courseNum);
     Course Search(string courseNum);
 };
 
@@ -199,8 +198,15 @@ void loadCourses(string filePath, BinarySearchTree* bst) {
     // POSSIBLE PROBLEM: Microsoft Text file encoding can cause a problem if it is UTF-8 BOM
     // FIX: Save text file as the same file but change the encoding to the normal UTF-8
     string line;
+    Course newCourse;
+  
     while (getline(fs, line)) {
-        
+        newCourse.courseNum = line.at(0);
+        newCourse.title = line.at(1);
+        for (int i = 0; i < line.length() - 2; i++)
+        {
+            //newCourse.prereqs.push_back(line.at(i));
+        }
     }
     return;
 }
