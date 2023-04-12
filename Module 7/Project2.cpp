@@ -11,6 +11,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -26,6 +27,10 @@ struct Course {
     string courseNum; // unique identifier
     string title;
     vector<string> prereqs;
+
+    Course() {
+        courseNum = "";
+    }
 };
 
 // Internal structure for tree node
@@ -174,7 +179,7 @@ void BinarySearchTree::inOrder(Node* node) {
     //InOrder left
     inOrder(node->left);
     //output courseNum, title
-    cout << node->course.courseNum << ": " << node->course.title << endl;
+    cout << node->course.courseNum << ", " << node->course.title << endl;
     //InOder right
     inOrder(node->right);
 }
@@ -197,18 +202,38 @@ void loadCourses(string filePath, BinarySearchTree* bst) {
     
     // POSSIBLE PROBLEM: Microsoft Text file encoding can cause a problem if it is UTF-8 BOM
     // FIX: Save text file as the same file but change the encoding to the normal UTF-8
-    string line;
-    Course newCourse;
-  
-    while (getline(fs, line)) {
-        newCourse.courseNum = line.at(0);
-        newCourse.title = line.at(1);
-        for (int i = 0; i < line.length() - 2; i++)
-        {
-            //newCourse.prereqs.push_back(line.at(i));
+    // Loop over each line in file until '\n' or eof is found
+    while (!fs.eof()) {
+        // Declare variable to hold each line, the splitLine, the the vector representing the splitLine
+        string line;
+        string splitLine;
+        vector<string> lineVec;
+
+        getline(fs, line);
+        // Create new course each iteration
+        Course course;
+
+        // Create a stream class to operate on strings (https://cplusplus.com/reference/sstream/stringstream/?kw=stringstream)
+        // Operate on each line that we get
+        stringstream stream(line);
+
+        // Using the line we get, use the getline function and the stream object to split the string by every comma
+        //     and insert each word into a vector
+        while (getline(stream, splitLine, ',')) {
+            lineVec.push_back(splitLine);
         }
+
+        // Assign courseNum and title to indices 0 and 1 respectively
+        course.courseNum = lineVec.at(0);
+        course.title = lineVec.at(1);
+
+        for (int i = 2; i < lineVec.size(); i++)
+        {
+            course.prereqs.push_back(lineVec.at(i));
+        }
+        bst->Insert(course);
     }
-    return;
+    cout << "File loaded." << endl;
 }
 
 //============================================================================
@@ -222,7 +247,13 @@ void loadCourses(string filePath, BinarySearchTree* bst) {
  */
 void displayCourse(Course course) {
     // FIXME: Output course data for prerequisites
-    cout << course.courseNum << ": " << course.title << endl;
+    cout << endl << course.courseNum << ", " << course.title << endl;
+    if (course.prereqs.size() != 0) {
+        cout << "Prerequisites: ";
+        for (int i = 0; i < course.prereqs.size() - 1; i++) { cout << course.prereqs.at(i) << ", "; }
+        cout << course.prereqs.at(course.prereqs.size() - 1) << endl;
+    }
+    cout << endl;
     return;
 }
 
@@ -260,7 +291,7 @@ int main(int argc, char* argv[]) {
 
     int choice = 0;
     while (choice != 9) {
-        cout << "Welcome To The Course Planner:" << endl;
+        cout << "Welcome To The Course Planner:" << endl << endl;
         cout << "  1. Load Data Structure" << endl;
         cout << "  2. Print Course List" << endl;
         cout << "  3. Print Course" << endl;
@@ -271,47 +302,52 @@ int main(int argc, char* argv[]) {
         switch (choice) {
 
             case 1:
+                // Clear scren
+                system("CLS");
 
-                // Initialize a timer variable before loading bids
-                ticks = clock();
-
+                // Get filename to search for
                 cout << "Enter file name (without .txt): ";
                 cin >> filePath;
+
+                // Call the loadCourses function given the filepath name and passing the tree structure
                 loadCourses(filePath, bst);
 
-                // Calculate elapsed time and display result
-                ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-                cout << "time: " << ticks << " clock ticks" << endl;
-                cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
                 break;
 
             case 2:
+                // Clear screen
+                system("CLS");
+
+                // Call the inOrder function to print all elements
+                cout << "Course List:" << endl << endl;
                 bst->InOrder();
+                cout << endl;
+
                 break;
 
             case 3:
-                ticks = clock();
-
+                
+                // Get user input for desired course number
                 cout << "Please enter the ID of the course: ";
                 cin >> searchNum;
+                // One liner to convert each character in input string to uppercase for even comparison since all data is uppercase
+                for (int i = 0; i < searchNum.length(); i++) { searchNum.at(i) = toupper(searchNum.at(i)); }
 
+                // Call search function on binary search tree to find the course with searchNum as its course number
                 course = bst->Search(searchNum);
 
-                ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-
+                // If course is not empty (meaning the course was found), display data
                 if (!course.courseNum.empty()) {
                     displayCourse(course);
                 }
+                // Else, course not found, output error
                 else {
                     cout << "Course number " << searchNum << " not found." << endl;
                 }
 
-                cout << "time: " << ticks << " clock ticks" << endl;
-                cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
-
                 break;
         }
     }
-    cout << "Good bye." << endl;
+    cout << "Thank you for using the course planner!" << endl;
     return 0;
 }
