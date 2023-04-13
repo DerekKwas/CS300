@@ -283,15 +283,13 @@ int main(int argc, char* argv[]) {
     string searchNum;
     string filePath;
 
-    // Define a timer variable
-    clock_t ticks;
-
     // Define a binary search tree to hold all courses
     BinarySearchTree* bst;
     bst = new BinarySearchTree();
     // Create empty course
     Course course;
 
+    string input;
     int choice = 0;
     while (choice != 9) {
         cout << "Welcome To The Course Planner:" << endl << endl;
@@ -300,7 +298,22 @@ int main(int argc, char* argv[]) {
         cout << "  3. Print Course" << endl;
         cout << "  9. Exit" << endl;
         cout << "What would you like to do? ";
-        cin >> choice;
+        getline(cin, input);
+
+        // Check if input is integer
+        // IF NOT, set choice to 0 to go to default switch case
+        bool isNotInt = false;
+        for (int i = 0; i < input.size() - 1; i++) {
+            cout << input.at(i) << endl;
+            if (!isdigit(input.at(i))) {
+                choice = 0;
+                isNotInt = true;
+                break;
+            }
+        }
+        if (!isNotInt) {
+            choice = stoi(input);
+        }
 
         switch (choice) {
 
@@ -310,7 +323,7 @@ int main(int argc, char* argv[]) {
 
                 // Get filename to search for
                 cout << "Enter file name (without .txt): ";
-                cin >> filePath;
+                getline(cin, filePath);
 
                 // Call the loadCourses function given the filepath name and passing the tree structure
                 loadCourses(filePath, bst);
@@ -332,7 +345,7 @@ int main(int argc, char* argv[]) {
                 
                 // Get user input for desired course number
                 cout << "Please enter the ID of the course: ";
-                cin >> searchNum;
+                getline(cin, searchNum);
                 // One liner to convert each character in input string to uppercase for even comparison since all data is uppercase
                 for (int i = 0; i < searchNum.length(); i++) { searchNum.at(i) = toupper(searchNum.at(i)); }
 
@@ -349,6 +362,10 @@ int main(int argc, char* argv[]) {
                 }
 
                 break;
+
+            default:
+                system("CLS");
+                cout << input << " is not a valid option." << endl;
         }
     }
     cout << "Thank you for using the course planner!" << endl;
