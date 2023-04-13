@@ -92,6 +92,7 @@ BinarySearchTree::~BinarySearchTree() {
 }
 
 void BinarySearchTree::Insert(Course course) {
+    // Create new node with its course as the passed course
     Node* newNode = new Node;
     newNode->course = course;
 
@@ -227,6 +228,7 @@ void loadCourses(string filePath, BinarySearchTree* bst) {
         course.courseNum = lineVec.at(0);
         course.title = lineVec.at(1);
 
+        // For each element after the 2nd in lineVec, add it to the courses prereq vector
         for (int i = 2; i < lineVec.size(); i++)
         {
             course.prereqs.push_back(lineVec.at(i));
@@ -246,8 +248,10 @@ void loadCourses(string filePath, BinarySearchTree* bst) {
  * @param  course containing the course info
  */
 void displayCourse(Course course) {
-    // FIXME: Output course data for prerequisites
+    // Output data of given course
     cout << endl << course.courseNum << ", " << course.title << endl;
+    // If the course prereq vector variable is not empty
+    //     Print out each prereq course number
     if (course.prereqs.size() != 0) {
         cout << "Prerequisites: ";
         for (int i = 0; i < course.prereqs.size() - 1; i++) { cout << course.prereqs.at(i) << ", "; }
@@ -275,8 +279,6 @@ double strToDouble(string str, char ch) {
  */
 int main(int argc, char* argv[]) {
 
-    // FIXME: Create function to load file
-
     // Declare variable to hold user choice for key and choice for file path
     string searchNum;
     string filePath;
@@ -287,6 +289,7 @@ int main(int argc, char* argv[]) {
     // Define a binary search tree to hold all courses
     BinarySearchTree* bst;
     bst = new BinarySearchTree();
+    // Create empty course
     Course course;
 
     int choice = 0;
